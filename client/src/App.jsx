@@ -1,9 +1,12 @@
-import React from 'react'
+import React from "react";
+import AppRouter from "./routes/AppRouter";
 
 const App = () => {
   return (
-    <div className='text-red-400'>App</div>
-  )
-}
+    <div>
+      <AppRouter />
+    </div>
+  );
+};
 
-export default App
+export default App;
