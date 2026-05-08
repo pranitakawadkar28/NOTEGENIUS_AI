@@ -1,5 +1,6 @@
 import { 
   forgotPasswordService,
+  getMeService,
   loginService, 
   logoutService, 
   registerService, 
@@ -99,6 +100,22 @@ export const resetPasswordController = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "PASSWORD_RESET_SUCCESSFULLY",
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getMeController = async (req, res, next) => {
+  try {
+    const { user } = await getMeService(req.user.userId);
+
+    res.status(200).json({
+      success: true,
+      message: "USER_FETCHED_SUCCESSFULLY",
+      data: {
+        user: user.toJSON(),
+      },
     });
   } catch (err) {
     next(err);

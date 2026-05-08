@@ -183,3 +183,13 @@ export const resetPasswordService = async ({ email, otp, newPassword }) => {
 
   return { message: "PASSWORD_RESET_SUCCESSFULLY" };
 };
+
+export const getMeService = async (userId) => {
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new AppError("USER_NOT_FOUND", 404);
+  }
+
+  return { user };
+};

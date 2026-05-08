@@ -2,6 +2,8 @@ import express from "express";
 
 import { validate } from "../middlewares/validator.middleware.js";
 
+import { authenticate } from "../middlewares/auth.middlware.js";
+
 import { 
     forgotPasswordSchema,
     loginSchema, 
@@ -12,6 +14,7 @@ import {
 
 import { 
     forgotPasswordController,
+    getMeController,
     loginController, 
     logoutController, 
     registerController, 
@@ -54,6 +57,12 @@ authRouter.post(
   "/password/reset",
   validate(resetPasswordSchema),
   resetPasswordController
+);
+
+authRouter.get(
+    "/me",
+    authenticate,
+    getMeController
 );
 
 export default authRouter;
