@@ -13,6 +13,10 @@ const requiredEnvVars = [
   "EMAIL_USER",
   "EMAIL_PASS",
   "REDIS_URL",
+  "FRONTEND_URL",
+  "GOOGLE_CLIENT_ID",
+  "GOOGLE_CLIENT_SECRET",
+  "GOOGLE_CALLBACK_URL"
 ];
 
 const missing = requiredEnvVars.filter((key) => !process.env[key]);
@@ -37,3 +41,9 @@ export const EMAIL_USER = process.env.EMAIL_USER;
 export const EMAIL_PASS = process.env.EMAIL_PASS;
 
 export const REDIS_URL = process.env.REDIS_URL;
+
+export const FRONTEND_URL = process.env.FRONTEND_URL
+
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+export const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL;

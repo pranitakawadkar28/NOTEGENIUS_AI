@@ -1,6 +1,7 @@
 import { 
   forgotPasswordService,
   getMeService,
+  googleLoginService,
   loginService, 
   logoutService, 
   refreshTokenService, 
@@ -138,5 +139,18 @@ export const refreshTokenController = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+};
+
+export const googleCallbackController = async (req, res, next) => {
+  try {
+    const { user, accessToken, refreshToken } = await googleLoginService(
+      req.user,
+    );
+    setAuthCookies(res, accessToken, refreshToken);
+
+    res.redirect(`${FRONTEND_URL}/`);
+  } catch (error) {
+    next(error);
   }
 };

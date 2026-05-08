@@ -235,3 +235,17 @@ export const refreshTokenService = async (refreshToken) => {
 
   return { newAccessToken, newRefreshToken };
 };
+
+export const googleLoginService = async (user) => {
+const accessToken = generateAccessToken({ userId: user._id, tokenVersion: user.tokenVersion });
+const refreshToken = generateRefreshToken({ userId: user._id, tokenVersion: user.tokenVersion });
+
+  const hashedRefreshToken = crypto
+    .createHash("sha256")
+    .update(refreshToken)
+    .digest("hex");
+  user.refreshToken = hashedRefreshToken;
+  await user.save();
+
+  return { user, accessToken, refreshToken };
+};
