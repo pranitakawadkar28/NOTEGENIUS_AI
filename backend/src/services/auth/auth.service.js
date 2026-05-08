@@ -11,6 +11,13 @@ import {
     generateAccessToken, 
     generateRefreshToken 
 } from "../../utils/jwt.js";
+import { 
+  deleteOTP, 
+  generateOTP, 
+  getOTP, 
+  storeOTP 
+} from "../../utils/otpGenerator.js";
+import { sendOtpEmail } from "../../utils/emailSender.js";
 
 export const registerService = async ({ username, email, password }) => {
   if (!username || !email || !password) {
@@ -33,6 +40,16 @@ export const registerService = async ({ username, email, password }) => {
     password: hashedPassword,
   });
 
+  const otp = generateOTP();
+  await storeOTP(email, otp);
+
+  try {
+    await sendOtpEmail(email, otp);
+  } catch (err) {
+    await User.deleteOne({ email });
+    throw new AppError("FAILED_TO_SEND_OTP", 500);
+  }
+
   return { user };
 };
 
@@ -41,6 +58,10 @@ export const loginService = async ({ email, password }) => {
 
   if (!user) {
     throw new AppError("INVALID_CREDENTIALS", 401);
+  }
+
+  if (!user.isVerified) {
+    throw new AppError("EMAIL_NOT_VERIFIED", 403);
   }
 
   const isMatched = await comparePassword(password, user.password);
@@ -82,4 +103,33 @@ export const logoutService = async (accessToken, refreshToken) => {
     { refreshToken: hashed },
     { $unset: { refreshToken: 1 } },
   );
+};
+
+export const verifyOtpService = async ({ email, otp }) => {
+  if (!email || !otp) {
+    throw new AppError("EMAIL_AND_OTP_REQUIRED", 400);
+  }
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new AppError("USER_NOT_FOUND", 404);
+  }
+
+  const storedOtp = await getOTP(email);
+
+  if (!storedOtp) {
+    throw new AppError("OTP_EXPIRED_OR_NOT_FOUND", 400);
+  }
+
+  if (!crypto.timingSafeEqual(Buffer.from(storedOtp), Buffer.from(otp))) {
+    throw new AppError("INVALID_OTP", 400);
+  }
+
+  user.isVerified = true;
+  await user.save();
+
+  await deleteOTP(email);
+
+  return { user };
 };

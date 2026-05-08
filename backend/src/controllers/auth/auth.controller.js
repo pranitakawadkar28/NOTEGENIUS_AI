@@ -1,4 +1,10 @@
-import { loginService, logoutService, registerService } from "../../services/auth/auth.service.js";
+import { 
+  loginService, 
+  logoutService, 
+  registerService, 
+  verifyOtpService 
+} from "../../services/auth/auth.service.js";
+
 import { clearAuthCookies, setAuthCookies } from "../../utils/cookies.js";
 
 export const registerController = async (req, res, next) => {
@@ -50,5 +56,23 @@ export const logoutController = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+};
+
+export const verifyOtpController = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body;
+
+    const { user } = await verifyOtpService({ email, otp });
+
+    res.status(200).json({
+      success: true,
+      message: "OTP_VERIFIED_SUCCESSFULLY",
+      data: {
+        user: user.toJSON(),
+      },
+    });
+  } catch (error) {
+    next(error);
   }
 };

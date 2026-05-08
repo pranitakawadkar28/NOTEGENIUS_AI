@@ -29,6 +29,11 @@ const userSchema = new mongoose.Schema(
       type: String,
       select: false,
     },
+
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true },
 );
@@ -36,6 +41,8 @@ const userSchema = new mongoose.Schema(
 userSchema.set("toJSON", {
   transform: function (doc, ret) {
     delete ret.password;
+    delete ret.refreshToken;
+
     delete ret.__v;
 
     ret.id = ret._id;

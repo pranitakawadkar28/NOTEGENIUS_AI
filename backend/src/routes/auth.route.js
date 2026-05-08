@@ -4,13 +4,15 @@ import { validate } from "../middlewares/validator.middleware.js";
 
 import { 
     loginSchema, 
-    registerSchema 
+    registerSchema, 
+    verifyOtpSchema
 } from "../validator/auth.validator.js";
 
 import { 
     loginController, 
     logoutController, 
-    registerController 
+    registerController, 
+    verifyOtpController
 } from "../controllers/auth/auth.controller.js";
 
 const authRouter = express.Router();
@@ -30,6 +32,12 @@ authRouter.post(
 authRouter.post(
     "/logout",
     logoutController
+);
+
+authRouter.post(
+    "/verify-otp", 
+    validate(verifyOtpSchema), 
+    verifyOtpController
 );
 
 export default authRouter;
