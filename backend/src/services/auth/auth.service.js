@@ -15,9 +15,13 @@ import {
   deleteOTP, 
   generateOTP, 
   getOTP, 
-  storeOTP 
+  storeOTP, 
+  verifyOTP
 } from "../../utils/otpGenerator.js";
-import { sendOtpEmail } from "../../utils/emailSender.js";
+import { 
+  sendOtpEmail, 
+  sendResetPasswordEmail 
+} from "../../utils/emailSender.js";
 
 export const registerService = async ({ username, email, password }) => {
   if (!username || !email || !password) {
@@ -132,4 +136,50 @@ export const verifyOtpService = async ({ email, otp }) => {
   await deleteOTP(email);
 
   return { user };
+};
+
+export const forgotPasswordService = async ({ email }) => {
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    throw new AppError("USER_NOT_FOUND", 404);
+  }
+
+  if (!user.isVerified) {
+    throw new AppError("EMAIL_NOT_VERIFIED", 400);
+  }
+
+  const otp = generateOTP();
+  await storeOTP(email, otp);
+  await sendResetPasswordEmail(email, otp);
+
+  return { message: "RESET_OTP_SENT_SUCCESSFULLY" };
+};
+
+export const resetPasswordService = async ({ email, otp, newPassword }) => {
+  const user = await User.findOne({ email }).select("+password");
+
+  if (!user) {
+    throw new AppError("USER_NOT_FOUND", 404);
+  }
+
+  // OTP verify
+  const isValid = await verifyOTP(email, otp);
+  if (!isValid) {
+    throw new AppError("INVALID_OR_EXPIRED_OTP", 400);
+  }
+
+  // new password hash
+  const hashedPassword = await hashPassword(newPassword);
+  user.password = hashedPassword;
+
+  // TokenVersion increment 
+  user.tokenVersion += 1;
+
+  await user.save();
+
+  // OTP delete
+  await deleteOTP(email);
+
+  return { message: "PASSWORD_RESET_SUCCESSFULLY" };
 };
