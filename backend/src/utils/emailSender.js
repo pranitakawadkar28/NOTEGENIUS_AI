@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 
 export const sendOtpEmail = async (email, otp) => {
   await transporter.sendMail({
-    from: `MOCKMATE_AI <${EMAIL_USER}>`,
+    from: `NOTEGENIUS_AI <${EMAIL_USER}>`,
     to: email,
     subject: "Email Verification OTP",
     html: `
@@ -30,7 +30,7 @@ export const sendOtpEmail = async (email, otp) => {
 
 export const sendResetPasswordEmail = async (email, otp) => {
   await transporter.sendMail({
-    from: `MOCKMATE_AI <${EMAIL_USER}>`,
+    from: `NOTEGENIUS_AI <${EMAIL_USER}>`,
     to: email,
     subject: "Reset Password OTP",
     html: `
