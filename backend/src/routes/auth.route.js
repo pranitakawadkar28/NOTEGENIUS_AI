@@ -65,4 +65,9 @@ authRouter.get(
     getMeController
 );
 
+authRouter.post(
+    "/refresh-token", 
+    refreshTokenController
+);
+
 export default authRouter;
