@@ -2,9 +2,16 @@ import express from "express";
 
 import { validate } from "../middlewares/validator.middleware.js";
 
-import { loginSchema, registerSchema } from "../validator/auth.validator.js";
+import { 
+    loginSchema, 
+    registerSchema 
+} from "../validator/auth.validator.js";
 
-import { loginController, registerController } from "../controllers/auth/auth.controller.js";
+import { 
+    loginController, 
+    logoutController, 
+    registerController 
+} from "../controllers/auth/auth.controller.js";
 
 const authRouter = express.Router();
 
@@ -18,6 +25,11 @@ authRouter.post(
     "/login", 
     validate(loginSchema), 
     loginController
+);
+
+authRouter.post(
+    "/logout",
+    logoutController
 );
 
 export default authRouter;

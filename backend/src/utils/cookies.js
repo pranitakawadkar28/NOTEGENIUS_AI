@@ -17,3 +17,19 @@ export const setAuthCookies = (res, accessToken, refreshToken) => {
     path: "/",
   });
 };
+
+export const clearAuthCookies = (res) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    sameSite: NODE_ENV === "production" ? "none" : "lax",
+    path: "/",
+  });
+
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: NODE_ENV === "production",
+    sameSite: NODE_ENV === "production" ? "none" : "lax",
+    path: "/",
+  });
+};

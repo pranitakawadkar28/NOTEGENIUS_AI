@@ -1,5 +1,5 @@
-import { loginService, registerService } from "../../services/auth/auth.service.js";
-import { setAuthCookies } from "../../utils/cookies.js";
+import { loginService, logoutService, registerService } from "../../services/auth/auth.service.js";
+import { clearAuthCookies, setAuthCookies } from "../../utils/cookies.js";
 
 export const registerController = async (req, res, next) => {
   try {
@@ -30,6 +30,23 @@ export const loginController = async (req, res, next) => {
       data: {
         user: user.toJSON(),
       },
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const logoutController = async (req, res, next) => {
+  try {
+    const refreshToken = req.cookies?.refreshToken; 
+
+    await logoutService(null, refreshToken);
+
+    clearAuthCookies(res); // cookies clear
+
+    res.status(200).json({
+      success: true,
+      message: "USER_LOGGED_OUT_SUCCESSFULLY",
     });
   } catch (err) {
     next(err);
