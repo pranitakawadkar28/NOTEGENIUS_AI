@@ -10,6 +10,7 @@ import { FRONTEND_URL } from "./config/env.js";
 import passport from "./config/passport.js";
 import noteRouter from "./routes/note.route.js";
 import pdfRouter from "./routes/pdf.route.js";
+import paymentRouter from "./routes/payment.route.js";
 
 const app = express();
 
@@ -25,8 +26,9 @@ app.use(
 );
 
 app.use("/api/auth", authRouter);
-app.use("/api/notes", noteRouter)
-app.use("/api/pdf", pdfRouter)
+app.use("/api/notes", noteRouter);
+app.use("/api/pdf", pdfRouter);
+app.use("/api/payment", paymentRouter);
 
 app.use(errorHandler);
 

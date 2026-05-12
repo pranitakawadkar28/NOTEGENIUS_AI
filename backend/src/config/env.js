@@ -18,6 +18,8 @@ const requiredEnvVars = [
   "GOOGLE_CLIENT_SECRET",
   "GOOGLE_CALLBACK_URL",
   "GEMINI_API_KEY",
+  "RAZORPAY_API_KEY",
+  "RAZORPAY_API_SECRET",
 ];
 
 const missing = requiredEnvVars.filter((key) => !process.env[key]);
@@ -50,3 +52,6 @@ export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 export const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL;
 
 export const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
+export const RAZORPAY_API_KEY = process.env.RAZORPAY_API_KEY;
+export const RAZORPAY_API_SECRET = process.env.RAZORPAY_API_SECRET;
