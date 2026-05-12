@@ -1,4 +1,5 @@
 import { ZodError } from "zod";
+
 import { AppError } from "../utils/AppError.js";
 
 export const errorHandler = (err, req, res, next) => {

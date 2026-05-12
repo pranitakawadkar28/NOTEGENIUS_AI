@@ -3,7 +3,7 @@ import {
   verifyRazorpayPayment,
 } from "../../services/payment/payment.service.js";
 
-export const createOrder = async (req, res) => {
+export const createOrder = async (req, res, next) => {
   try {
     const { planId, amount, credits } = req.body;
 
@@ -18,15 +18,16 @@ export const createOrder = async (req, res) => {
       credits,
     });
 
-    return res.json(order);
+    return res.json({ success: true, data: order });
   } catch (error) {
-    return res.status(500).json({ message: `Failed to create order: ${error.message}` });
+    next(error);
   }
 };
 
 export const verifyPayment = async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+      req.body;
 
     const result = await verifyRazorpayPayment({
       razorpay_order_id,
@@ -41,15 +42,9 @@ export const verifyPayment = async (req, res) => {
     return res.json({
       success: true,
       message: "Payment verified and credits added",
-      user: result.updatedUser,
+      data: { user: result.updatedUser },
     });
   } catch (error) {
-    if (error.message === "Invalid payment signature") {
-      return res.status(400).json({ message: error.message });
-    }
-    if (error.message === "Payment not found") {
-      return res.status(404).json({ message: error.message });
-    }
-    return res.status(500).json({ message: `Failed to verify payment: ${error.message}` });
+    next(error);
   }
 };

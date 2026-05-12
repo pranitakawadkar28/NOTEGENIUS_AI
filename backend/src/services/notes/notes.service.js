@@ -2,7 +2,9 @@ import { User } from "../../models/user.model.js";
 import { Note } from "../../models/note.model.js";
 
 import { buildPrompt } from "../../utils/promptBuilder.js";
+
 import { generateGeminiResponse } from "../../config/gemini.js";
+
 import { AppError } from "../../utils/AppError.js";
 
 export const generateNotesService = async ({
@@ -36,7 +38,6 @@ export const generateNotesService = async ({
   const aiResponse = await generateGeminiResponse(prompt);
 
   user.credits -= 10;
-  user.isCreditAvailable = user.credits >= 10;
 
   const note = await Note.create({
     user: user._id,

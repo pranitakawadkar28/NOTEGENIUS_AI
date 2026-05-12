@@ -43,12 +43,7 @@ const userSchema = new mongoose.Schema(
     credits: {
       type: Number,
       default: 50,
-      min: 0
-    },
-
-    isCreditAvailable: {
-      type: Boolean,
-      default: true
+      min: 0,
     },
 
     notes: [
@@ -70,6 +65,8 @@ userSchema.set("toJSON", {
 
     ret.id = ret._id;
     delete ret._id;
+
+    ret.isCreditAvailable = ret.credits >= 10;
 
     return ret;
   },

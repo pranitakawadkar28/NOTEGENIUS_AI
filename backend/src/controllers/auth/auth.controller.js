@@ -1,4 +1,3 @@
-import { FRONTEND_URL } from "../../config/env.js";
 import { 
   forgotPasswordService,
   getMeService,
@@ -11,7 +10,10 @@ import {
   verifyOtpService 
 } from "../../services/auth/auth.service.js";
 
-import { clearAuthCookies, setAuthCookies } from "../../utils/cookies.js";
+import { 
+  clearAuthCookies, 
+  setAuthCookies 
+} from "../../utils/cookies.js";
 
 export const registerController = async (req, res, next) => {
   try {

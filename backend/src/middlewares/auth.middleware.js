@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
+
 import { ACCESS_TOKEN_SECRET } from "../config/env.js";
+
 import { AppError } from "../utils/AppError.js";
 
 export const authenticate = async (req, res, next) => {

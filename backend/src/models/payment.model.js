@@ -29,8 +29,11 @@ const paymentSchema = new mongoose.Schema(
       enum: ["created", "paid", "failed"],
       default: "created",
     },
+    planId: {
+      type: String,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Payment = mongoose.model("Payment", paymentSchema);

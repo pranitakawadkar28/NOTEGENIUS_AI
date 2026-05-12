@@ -1,5 +1,4 @@
 import { generateNotesService } from "../../services/notes/notes.service.js";
-import { AppError } from "../../utils/AppError.js";
 
 export const generateNotes = async (req, res, next) => {
   try {
@@ -11,10 +10,6 @@ export const generateNotes = async (req, res, next) => {
       includeDiagram = false,
       includeChart = false,
     } = req.body;
-
-    if (!topic) {
-      throw new AppError("TOPIC_IS_REQUIRED", 400);
-    }
 
     const note = await generateNotesService({
       userId: req.userId,

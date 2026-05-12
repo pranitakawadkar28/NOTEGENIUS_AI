@@ -1,21 +1,13 @@
 import { generatePdfService } from "../../services/pdf/pdf.service.js";
 
-export const pdfDownload = async (req, res) => {
+import { AppError } from "../../utils/AppError.js";
+
+export const pdfDownload = async (req, res, next) => {
   try {
     const { result } = req.body;
-
-    if (!result) {
-      return res.status(400).json({
-        success: false,
-        message: "NO CONTENT PROVIDED",
-      });
-    }
-
+    if (!result) throw new AppError("NO_CONTENT_PROVIDED", 400);
     generatePdfService(result, res);
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message || "PDF GENERATION FAILED",
-    });
+    next(error);
   }
 };

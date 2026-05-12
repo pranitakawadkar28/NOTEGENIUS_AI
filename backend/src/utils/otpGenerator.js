@@ -1,4 +1,5 @@
 import crypto from "crypto";
+
 import redisClient from "../config/redis.js";
 
 // 6 digit OTP generate

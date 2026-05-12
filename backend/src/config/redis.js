@@ -1,4 +1,5 @@
 import { createClient } from "redis";
+
 import { REDIS_URL } from "./env.js";
 
 const redisClient = createClient({ url: REDIS_URL });
@@ -14,6 +15,7 @@ export const connectRedis = async () => {
         }
     } catch (error) {
         console.error("Redis connection failed:", error);
+        process.exit(1);
     }
 };
 

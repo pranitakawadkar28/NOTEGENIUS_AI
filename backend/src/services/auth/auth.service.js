@@ -1,7 +1,9 @@
 import crypto from "crypto";
+
 import jwt from "jsonwebtoken";
 
 import { User } from "../../models/user.model.js";
+
 import { AppError } from "../../utils/AppError.js";
 import { comparePassword, hashPassword } from "../../utils/hash.js";
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
@@ -16,6 +18,7 @@ import {
   sendOtpEmail,
   sendResetPasswordEmail,
 } from "../../utils/emailSender.js";
+
 import { REFRESH_TOKEN_SECRET } from "../../config/env.js";
 
 export const registerService = async ({ username, email, password }) => {
@@ -61,6 +64,10 @@ export const loginService = async ({ email, password }) => {
 
   if (!user.isVerified) {
     throw new AppError("EMAIL_NOT_VERIFIED", 403);
+  }
+
+  if (!user.password) {
+    throw new AppError("USE_GOOGLE_LOGIN_FOR_THIS_ACCOUNT", 401);
   }
 
   const isMatched = await comparePassword(password, user.password);
