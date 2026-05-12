@@ -2,7 +2,7 @@ import { GEMINI_API_KEY } from "./env.js";
 import { AppError } from "../utils/AppError.js";
 
 const GEMINI_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent";
 
 export const generateGeminiResponse = async (prompt) => {
   try {
