@@ -16,7 +16,8 @@ const requiredEnvVars = [
   "FRONTEND_URL",
   "GOOGLE_CLIENT_ID",
   "GOOGLE_CLIENT_SECRET",
-  "GOOGLE_CALLBACK_URL"
+  "GOOGLE_CALLBACK_URL",
+  "GEMINI_API_KEY",
 ];
 
 const missing = requiredEnvVars.filter((key) => !process.env[key]);
@@ -47,3 +48,5 @@ export const FRONTEND_URL = process.env.FRONTEND_URL
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 export const GOOGLE_CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL;
+
+export const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
