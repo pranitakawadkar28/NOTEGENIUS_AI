@@ -6,7 +6,7 @@ import { FRONTEND_URL } from "../config/env.js";
 
 import { validate } from "../middlewares/validator.middleware.js";
 
-import { authenticate } from "../middlewares/auth.middlware.js";
+import { authenticate } from "../middlewares/auth.middleware.js";
 
 import { 
     forgotPasswordSchema,

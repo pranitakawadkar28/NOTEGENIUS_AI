@@ -3,24 +3,18 @@ import jwt from "jsonwebtoken";
 
 import { User } from "../../models/user.model.js";
 import { AppError } from "../../utils/AppError.js";
-import { 
-    comparePassword, 
-    hashPassword 
-} from "../../utils/hash.js";
-import { 
-    generateAccessToken, 
-    generateRefreshToken 
-} from "../../utils/jwt.js";
-import { 
-  deleteOTP, 
-  generateOTP, 
-  getOTP, 
-  storeOTP, 
-  verifyOTP
+import { comparePassword, hashPassword } from "../../utils/hash.js";
+import { generateAccessToken, generateRefreshToken } from "../../utils/jwt.js";
+import {
+  deleteOTP,
+  generateOTP,
+  getOTP,
+  storeOTP,
+  verifyOTP,
 } from "../../utils/otpGenerator.js";
-import { 
-  sendOtpEmail, 
-  sendResetPasswordEmail 
+import {
+  sendOtpEmail,
+  sendResetPasswordEmail,
 } from "../../utils/emailSender.js";
 import { REFRESH_TOKEN_SECRET } from "../../config/env.js";
 
@@ -96,13 +90,10 @@ export const loginService = async ({ email, password }) => {
   return { user, accessToken, refreshToken };
 };
 
-export const logoutService = async (accessToken, refreshToken) => {
+export const logoutService = async (refreshToken) => {
   if (!refreshToken) return;
 
-  const hashed = crypto
-  .createHash("sha256")
-  .update(refreshToken)
-  .digest("hex");
+  const hashed = crypto.createHash("sha256").update(refreshToken).digest("hex");
 
   await User.updateOne(
     { refreshToken: hashed },
@@ -165,8 +156,13 @@ export const resetPasswordService = async ({ email, otp, newPassword }) => {
   }
 
   // OTP verify
-  const isValid = await verifyOTP(email, otp);
-  if (!isValid) {
+  const storedOtp = await getOTP(email);
+
+  if (!storedOtp) {
+    throw new AppError("OTP_EXPIRED_OR_NOT_FOUND", 400);
+  }
+
+  if (!crypto.timingSafeEqual(Buffer.from(storedOtp), Buffer.from(otp))) {
     throw new AppError("INVALID_OR_EXPIRED_OTP", 400);
   }
 
@@ -174,7 +170,7 @@ export const resetPasswordService = async ({ email, otp, newPassword }) => {
   const hashedPassword = await hashPassword(newPassword);
   user.password = hashedPassword;
 
-  // TokenVersion increment 
+  // TokenVersion increment
   user.tokenVersion += 1;
 
   await user.save();
@@ -216,6 +212,15 @@ export const refreshTokenService = async (refreshToken) => {
     throw new AppError("TOKEN_NO_LONGER_VALID", 401);
   }
 
+  const hashedIncoming = crypto
+    .createHash("sha256")
+    .update(refreshToken)
+    .digest("hex");
+
+  if (user.refreshToken !== hashedIncoming) {
+    throw new AppError("REFRESH_TOKEN_REUSE_DETECTED", 401);
+  }
+
   const newAccessToken = generateAccessToken({
     userId: user._id,
     tokenVersion: user.tokenVersion,
@@ -237,9 +242,14 @@ export const refreshTokenService = async (refreshToken) => {
 };
 
 export const googleLoginService = async (user) => {
-const accessToken = generateAccessToken({ userId: user._id, tokenVersion: user.tokenVersion });
-const refreshToken = generateRefreshToken({ userId: user._id, tokenVersion: user.tokenVersion });
-
+  const accessToken = generateAccessToken({
+    userId: user._id,
+    tokenVersion: user.tokenVersion,
+  });
+  const refreshToken = generateRefreshToken({
+    userId: user._id,
+    tokenVersion: user.tokenVersion,
+  });
   const hashedRefreshToken = crypto
     .createHash("sha256")
     .update(refreshToken)

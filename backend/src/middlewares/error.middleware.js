@@ -21,7 +21,7 @@ export const errorHandler = (err, req, res, next) => {
   }
 
   // Unknown errors
-  console.log(err);
+  console.error(err);
 
   res.status(500).json({
     success: false,

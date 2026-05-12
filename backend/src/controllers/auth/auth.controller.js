@@ -52,9 +52,9 @@ export const logoutController = async (req, res, next) => {
   try {
     const refreshToken = req.cookies?.refreshToken; 
 
-    await logoutService(null, refreshToken);
+    await logoutService(refreshToken);
 
-    clearAuthCookies(res); // cookies clear
+    clearAuthCookies(res);
 
     res.status(200).json({
       success: true,

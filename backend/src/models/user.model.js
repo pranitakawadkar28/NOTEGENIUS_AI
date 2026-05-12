@@ -20,6 +20,11 @@ const userSchema = new mongoose.Schema(
       default: null,
     },
 
+    googleId: {
+      type: String,
+      default: null,
+    },
+
     tokenVersion: {
       type: Number,
       default: 0,
@@ -46,10 +51,12 @@ const userSchema = new mongoose.Schema(
       default: true
     },
 
-    notes: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Notes",
-    }
+    notes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Note",
+      },
+    ],
   },
   { timestamps: true },
 );

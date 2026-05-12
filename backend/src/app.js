@@ -8,6 +8,7 @@ import authRouter from "./routes/auth.route.js";
 
 import { FRONTEND_URL } from "./config/env.js";
 import passport from "./config/passport.js";
+import noteRouter from "./routes/note.route.js";
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use(
 );
 
 app.use("/api/auth", authRouter);
+app.use("/api/notes", noteRouter)
 
 app.use(errorHandler);
 
