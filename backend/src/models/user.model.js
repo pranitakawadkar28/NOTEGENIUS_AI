@@ -34,6 +34,22 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    credits: {
+      type: Number,
+      default: 50,
+      min: 0
+    },
+
+    isCreditAvailable: {
+      type: Boolean,
+      default: true
+    },
+
+    notes: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Notes",
+    }
   },
   { timestamps: true },
 );
