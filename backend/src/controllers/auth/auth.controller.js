@@ -1,3 +1,4 @@
+import { FRONTEND_URL } from "../../config/env.js";
 import { 
   forgotPasswordService,
   getMeService,

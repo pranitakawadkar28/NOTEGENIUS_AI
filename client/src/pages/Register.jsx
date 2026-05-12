@@ -120,7 +120,11 @@ const Register = ({ isModel = false, switchAuth, onClose }) => {
 
             {/* Heading */}
             <h1 className="text-5xl font-bold leading-[1.05] tracking-[-2px] text-white mb-6">
-              Create Smart <br />
+              Create 
+              <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text px-3 text-transparent italic">
+                Smart
+              </span>
+              <br />
               <span className="bg-gradient-to-r from-[#e6b000] to-yellow-300 bg-clip-text text-transparent italic">
                 AI Notes
               </span>{" "}
@@ -297,19 +301,6 @@ const Register = ({ isModel = false, switchAuth, onClose }) => {
               </Link>
             )}
           </p>
-
-          {/* Back */}
-          {!isModel && (
-            <div className="flex justify-center mt-5">
-              <Link
-                to="/"
-                className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-300 transition"
-              >
-                <ArrowLeft size={12} />
-                Back to home
-              </Link>
-            </div>
-          )}
         </div>
       </motion.div>
     </div>

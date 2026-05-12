@@ -27,7 +27,7 @@ const Login = ({ isModel = false, switchAuth }) => {
     };
   }, [dispatch]);
   useEffect(() => {
-    if (isAuthenticated && !isModel) navigate("/");
+    if (isAuthenticated && !isModel) navigate("/dashboard");
   }, [isAuthenticated, navigate, isModel]);
 
   const handleChange = (e) =>
@@ -108,7 +108,7 @@ const Login = ({ isModel = false, switchAuth }) => {
                 Smart
               </span>
               <br />
-              <span className="bg-gradient-to-r from-purple-400 to-purple-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-[#e6b000] to-yellow-300 bg-clip-text text-transparent italic">
                 AI Notes
               </span>
             </h2>
@@ -262,18 +262,6 @@ const Login = ({ isModel = false, switchAuth }) => {
               Sign up
             </Link>
           </p>
-
-          {!isModel && (
-            <div className="flex justify-center mt-4">
-              <Link
-                to="/"
-                className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-300 transition-colors"
-              >
-                <ArrowLeft size={12} />
-                Back to home
-              </Link>
-            </div>
-          )}
         </div>
       </motion.div>
     </div>
