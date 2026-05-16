@@ -69,8 +69,8 @@ DIAGRAM RULES:
 If Include Diagram is YES:
 - diagram.data MUST contain valid Mermaid syntax
 - MUST start with "graph TD"
-- Every node label must use square brackets
-- Avoid special characters inside node labels
+- Every node label MUST use square brackets and ALWAYS be wrapped in double quotes
+- Example: A["User Login"] or B["ReactDOM.render() called"]
 - Keep diagram simple and readable
 
 If Include Diagram is NO:

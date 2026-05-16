@@ -13,18 +13,31 @@ export default function MermaidRenderer({ chart, className }) {
   // Unique ID for each diagram to prevent SVG collision
   const diagramId = useRef(`mermaid-${Math.random().toString(36).substr(2, 9)}`)
 
+  // Preprocess chart to fix common syntax errors (like unquoted parentheses in labels)
+  const cleanChart = (code) => {
+    if (!code) return code
+    return code.replace(/([a-zA-Z0-9_-]+)\[(.*?)\]/g, (match, id, label) => {
+      // If label has parentheses and isn't already quoted, quote it
+      if ((label.includes('(') || label.includes(')')) && !label.startsWith('"')) {
+        return `${id}["${label}"]`
+      }
+      return match
+    })
+  }
+
   useEffect(() => {
     const renderChart = async () => {
       if (!chart || !containerRef.current) return
       
+      const sanitizedChart = cleanChart(chart)
       setIsRendering(true)
       setError(null)
       
       try {
         // Handle invalid syntax safely
-        const isValid = await mermaid.parse(chart)
+        const isValid = await mermaid.parse(sanitizedChart)
         if (isValid) {
-          const { svg: renderedSvg } = await mermaid.render(diagramId.current, chart)
+          const { svg: renderedSvg } = await mermaid.render(diagramId.current, sanitizedChart)
           setSvg(renderedSvg)
         }
       } catch (err) {

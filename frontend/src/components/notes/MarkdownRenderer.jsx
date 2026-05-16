@@ -1,6 +1,6 @@
 import ReactMarkdown from 'react-markdown'
 import { cn } from '@/lib/utils'
-import Mermaid from './Mermaid'
+import MermaidRenderer from './MermaidRenderer'
 import DataChart from './DataChart'
 
 export default function MarkdownRenderer({ content, className }) {
@@ -25,7 +25,7 @@ export default function MarkdownRenderer({ content, className }) {
             const language = match ? match[1] : null
 
             if (!inline && language === 'mermaid') {
-              return <Mermaid chart={String(children).replace(/\n$/, '')} />
+              return <MermaidRenderer chart={String(children).replace(/\n$/, '')} />
             }
 
             if (!inline && language === 'chart') {
