@@ -16,7 +16,7 @@ export const generateNotes = async (req, res, next) => {
       includeChart = false,
     } = req.body;
 
-    const note = await generateNotesService({
+    const { note, remainingCredits } = await generateNotesService({
       userId: req.userId,
       topic,
       classLevel,
