@@ -1,35 +1,32 @@
 import { NODE_ENV } from "../config/env.js";
 
 export const setAuthCookies = (res, accessToken, refreshToken) => {
-  res.cookie("accessToken", accessToken, {
+  const cookieOptions = {
     httpOnly: true,
-    secure: NODE_ENV === "production",
-    sameSite: NODE_ENV === "production" ? "none" : "lax",
-    maxAge: 15 * 60 * 1000,
+    secure: true, // Always true for cross-domain
+    sameSite: "none", // Required for cross-domain cookies
     path: "/",
+  };
+
+  res.cookie("accessToken", accessToken, {
+    ...cookieOptions,
+    maxAge: 15 * 60 * 1000,
   });
 
   res.cookie("refreshToken", refreshToken, {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-    sameSite: NODE_ENV === "production" ? "none" : "lax",
+    ...cookieOptions,
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    path: "/",
   });
 };
 
 export const clearAuthCookies = (res) => {
-  res.clearCookie("accessToken", {
+  const cookieOptions = {
     httpOnly: true,
-    secure: NODE_ENV === "production",
-    sameSite: NODE_ENV === "production" ? "none" : "lax",
+    secure: true,
+    sameSite: "none",
     path: "/",
-  });
+  };
 
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: NODE_ENV === "production",
-    sameSite: NODE_ENV === "production" ? "none" : "lax",
-    path: "/",
-  });
+  res.clearCookie("accessToken", cookieOptions);
+  res.clearCookie("refreshToken", cookieOptions);
 };
