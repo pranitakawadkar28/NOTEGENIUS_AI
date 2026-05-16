@@ -15,12 +15,26 @@ import paymentRouter from "./routes/payments.route.js";
 
 const app = express();
 
+const allowedOrigins = [
+  FRONTEND_URL,
+  FRONTEND_URL?.endsWith('/') ? FRONTEND_URL.slice(0, -1) : `${FRONTEND_URL}/`
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: FRONTEND_URL,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.error(`CORS Blocked: Request from ${origin} not in ${allowedOrigins}`);
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   }),
 );
+
+console.log(`Backend initialized. Allowed Origin: ${FRONTEND_URL}`);
 
 app.use(express.json());
 app.use(cookieParser());

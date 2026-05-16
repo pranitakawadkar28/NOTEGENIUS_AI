@@ -10,41 +10,45 @@ import {
   GOOGLE_CLIENT_SECRET 
 } from "./env.js";
 
-passport.use(
-  new GoogleStrategy(
-    {
-      clientID: GOOGLE_CLIENT_ID,
-      clientSecret: GOOGLE_CLIENT_SECRET,
-      callbackURL: GOOGLE_CALLBACK_URL,
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      try {
-        let user = await User.findOne({ googleId: profile.id });
+if (GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET) {
+  passport.use(
+    new GoogleStrategy(
+      {
+        clientID: GOOGLE_CLIENT_ID,
+        clientSecret: GOOGLE_CLIENT_SECRET,
+        callbackURL: GOOGLE_CALLBACK_URL,
+      },
+      async (accessToken, refreshToken, profile, done) => {
+        try {
+          let user = await User.findOne({ googleId: profile.id });
 
-        if (!user) {
-          user = await User.findOne({ 
-            email: profile.emails[0].value 
-          });
-
-          if (user) {
-            user.googleId = profile.id;
-            await user.save();
-          } else {
-            user = await User.create({
-              googleId: profile.id,
-              email: profile.emails[0].value,
-              username: profile.displayName.replace(/\s+/g, "_").toLowerCase(),
-              isVerified: true,
+          if (!user) {
+            user = await User.findOne({ 
+              email: profile.emails[0].value 
             });
-          }
-        }
 
-        return done(null, user);
-      } catch (error) {
-        return done(error, null);
+            if (user) {
+              user.googleId = profile.id;
+              await user.save();
+            } else {
+              user = await User.create({
+                googleId: profile.id,
+                email: profile.emails[0].value,
+                username: profile.displayName.replace(/\s+/g, "_").toLowerCase(),
+                isVerified: true,
+              });
+            }
+          }
+
+          return done(null, user);
+        } catch (error) {
+          return done(error, null);
+        }
       }
-    }
-  )
-);
+    )
+  );
+} else {
+  console.warn("Google Client ID or Secret missing. Google OAuth will be disabled.");
+}
 
 export default passport;
