@@ -15,16 +15,19 @@ import paymentRouter from "./routes/payment.route.js";
 
 const app = express();
 
-app.use(express.json());
-app.use(cookieParser());
-app.use(passport.initialize());
-
 app.use(
   cors({
     origin: FRONTEND_URL,
     credentials: true,
   }),
 );
+
+app.use(express.json());
+app.use(cookieParser());
+app.use(passport.initialize());
+
+// Handle favicon.ico requests to avoid 404 errors in browser logs
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 app.use("/api/auth", authRouter);
 app.use("/api/notes", noteRouter);

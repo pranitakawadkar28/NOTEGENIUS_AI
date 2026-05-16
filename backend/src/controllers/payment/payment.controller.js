@@ -3,19 +3,23 @@ import {
   verifyRazorpayPayment,
 } from "../../services/payment/payment.service.js";
 
+import { PLANS } from "../../config/plans.js";
+import { AppError } from "../../utils/AppError.js";
+
 export const createOrder = async (req, res, next) => {
   try {
-    const { planId, amount, credits } = req.body;
+    const { planId } = req.body;
+    const plan = PLANS[planId];
 
-    if (!amount || !credits) {
-      return res.status(400).json({ message: "Invalid plan data" });
+    if (!plan) {
+      throw new AppError("INVALID_PLAN_SELECTED", 400);
     }
 
     const order = await createRazorpayOrder({
       userId: req.user.userId,
-      planId,
-      amount,
-      credits,
+      planId: plan.id,
+      amount: plan.price,
+      credits: plan.credits,
     });
 
     return res.json({ success: true, data: order });
@@ -44,6 +48,15 @@ export const verifyPayment = async (req, res) => {
       message: "Payment verified and credits added",
       data: { user: result.updatedUser },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getPaymentHistory = async (req, res, next) => {
+  try {
+    const history = await getUserPaymentsService(req.user.userId);
+    return res.json({ success: true, data: history });
   } catch (error) {
     next(error);
   }

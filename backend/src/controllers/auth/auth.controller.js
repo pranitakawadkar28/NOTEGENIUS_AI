@@ -7,13 +7,17 @@ import {
   refreshTokenService, 
   registerService, 
   resetPasswordService, 
-  verifyOtpService 
+  verifyOtpService,
+  updateProfileService,
+  changePasswordService 
 } from "../../services/auth/auth.service.js";
 
 import { 
   clearAuthCookies, 
   setAuthCookies 
 } from "../../utils/cookies.js";
+
+import { FRONTEND_URL } from "../../config/env.js";
 
 export const registerController = async (req, res, next) => {
   try {
@@ -153,6 +157,35 @@ export const googleCallbackController = async (req, res, next) => {
     setAuthCookies(res, accessToken, refreshToken);
 
     res.redirect(`${FRONTEND_URL}/`);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateProfile = async (req, res, next) => {
+  try {
+    const { username, email } = req.body;
+    const result = await updateProfileService(req.user.userId, { username, email });
+
+    return res.status(200).json({
+      success: true,
+      message: "PROFILE_UPDATED_SUCCESSFULLY",
+      data: { user: result.user.toJSON() },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const result = await changePasswordService(req.user.userId, { currentPassword, newPassword });
+
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+    });
   } catch (error) {
     next(error);
   }

@@ -8,7 +8,7 @@ export const generatePdfService = (result, res) => {
 
   res.setHeader(
     "Content-Disposition",
-    'attachment; filename="NOTEGENIUS-AI.pdf"'
+    'attachment; filename="NoteGenius_AI_StudyGuide.pdf"'
   );
 
   // Pipe PDF stream
@@ -18,7 +18,7 @@ export const generatePdfService = (result, res) => {
   // TITLE
   // =========================
 
-  doc.fontSize(20).text("ExamNotes AI", {
+  doc.fontSize(24).font('Helvetica-Bold').text("NoteGenius AI", {
     align: "center",
   });
 
@@ -118,6 +118,21 @@ export const generatePdfService = (result, res) => {
   doc
     .fontSize(12)
     .text(result.questions?.diagram || "No Diagram Question");
+
+  doc.moveDown();
+
+  // =========================
+  // DIAGRAM SYNTAX
+  // =========================
+  
+  if (result.diagram && result.diagram.data) {
+    doc.fontSize(16).text("Conceptual Flow (Mermaid Syntax)");
+    doc.moveDown(0.5);
+    
+    doc.fontSize(10).font('Courier').text(result.diagram.data);
+    doc.font('Helvetica'); // Reset font
+    doc.moveDown();
+  }
 
   // Finish PDF
   doc.end();

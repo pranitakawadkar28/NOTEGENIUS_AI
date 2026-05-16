@@ -24,9 +24,3 @@ export const getOTP = async (email) => {
 export const deleteOTP = async (email) => {
   await redisClient.del(`otp:${email}`);
 };
-
-// OTP verify 
-export const verifyOTP = async (email, otp) => {
-  const storedOTP = await redisClient.get(`otp:${email}`);
-  return storedOTP === otp;
-};

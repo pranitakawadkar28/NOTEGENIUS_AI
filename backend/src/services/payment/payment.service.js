@@ -48,7 +48,12 @@ export const verifyRazorpayPayment = async ({
     .update(body)
     .digest("hex");
 
-  if (expectedSignature !== razorpay_signature) {
+  const isValid = crypto.timingSafeEqual(
+    Buffer.from(expectedSignature, "hex"),
+    Buffer.from(razorpay_signature, "hex")
+  );
+
+  if (!isValid) {
     throw new AppError("INVALID_PAYMENT_SIGNATURE", 400);
   }
 
@@ -76,4 +81,8 @@ export const verifyRazorpayPayment = async ({
   );
 
   return { alreadyProcessed: false, updatedUser };
+};
+
+export const getUserPaymentsService = async (userId) => {
+  return await Payment.find({ userId }).sort({ createdAt: -1 });
 };

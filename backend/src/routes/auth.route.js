@@ -8,91 +8,86 @@ import { validate } from "../middlewares/validator.middleware.js";
 
 import { authenticate } from "../middlewares/auth.middleware.js";
 
-import { 
-    forgotPasswordSchema,
-    loginSchema, 
-    registerSchema, 
-    resetPasswordSchema, 
-    verifyOtpSchema
+import {
+  authLimiter,
+  otpLimiter,
+} from "../middlewares/rateLimiter.middleware.js";
+
+import {
+  forgotPasswordSchema,
+  loginSchema,
+  registerSchema,
+  resetPasswordSchema,
+  verifyOtpSchema,
 } from "../validator/auth.validator.js";
 
-import { 
-    forgotPasswordController,
-    getMeController,
-    googleCallbackController,
-    loginController, 
-    logoutController, 
-    refreshTokenController, 
-    registerController, 
-    resetPasswordController, 
-    verifyOtpController
+import {
+  forgotPasswordController,
+  getMeController,
+  googleCallbackController,
+  loginController,
+  logoutController,
+  refreshTokenController,
+  registerController,
+  resetPasswordController,
+  verifyOtpController,
+  updateProfile,
+  changePassword,
 } from "../controllers/auth/auth.controller.js";
 
 const authRouter = express.Router();
 
-authRouter.post(
-    "/register", 
-    validate(registerSchema), 
-    registerController
-);
+authRouter.post("/register", validate(registerSchema), registerController);
+
+authRouter.post("/login", validate(loginSchema), loginController);
+
+authRouter.post("/logout", logoutController);
 
 authRouter.post(
-    "/login", 
-    validate(loginSchema), 
-    loginController
-);
-
-authRouter.post(
-    "/logout",
-    logoutController
-);
-
-authRouter.post(
-    "/verify-otp", 
-    validate(verifyOtpSchema), 
-    verifyOtpController
+  "/verify-otp",
+  otpLimiter,
+  validate(verifyOtpSchema),
+  verifyOtpController,
 );
 
 authRouter.post(
   "/password/forgot",
+  otpLimiter,
   validate(forgotPasswordSchema),
-  forgotPasswordController
+  forgotPasswordController,
 );
 
 authRouter.post(
   "/password/reset",
   validate(resetPasswordSchema),
-  resetPasswordController
+  resetPasswordController,
 );
 
-authRouter.get(
-    "/me",
-    authenticate,
-    getMeController
-);
+authRouter.get("/me", authenticate, getMeController);
 
-authRouter.post(
-    "/refresh-token", 
-    refreshTokenController
-);
+authRouter.post("/refresh-token", refreshTokenController);
 
-// Google OAuth initiate 
+// Google OAuth initiate
 authRouter.get(
   "/google",
-  passport.authenticate("google", { 
+  passport.authenticate("google", {
     scope: ["profile", "email"],
-    session: false 
-  })
+    session: false,
+  }),
 );
 
 // Google callback route
 authRouter.get(
   "/google/callback",
-  passport.authenticate("google", { 
+  passport.authenticate("google", {
     session: false,
-    failureRedirect: `${FRONTEND_URL}/login?error=google_auth_failed`
+    failureRedirect: `${FRONTEND_URL}/login?error=google_auth_failed`,
   }),
-  googleCallbackController
+  googleCallbackController,
 );
+
+authRouter.patch("/profile/update", authenticate, updateProfile);
+
+authRouter.patch("/password/change", authenticate, changePassword);
 
 export default authRouter;

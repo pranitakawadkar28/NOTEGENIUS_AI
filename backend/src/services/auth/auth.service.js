@@ -12,7 +12,6 @@ import {
   generateOTP,
   getOTP,
   storeOTP,
-  verifyOTP,
 } from "../../utils/otpGenerator.js";
 import {
   sendOtpEmail,
@@ -140,12 +139,9 @@ export const verifyOtpService = async ({ email, otp }) => {
 export const forgotPasswordService = async ({ email }) => {
   const user = await User.findOne({ email });
 
-  if (!user) {
-    throw new AppError("USER_NOT_FOUND", 404);
-  }
-
-  if (!user.isVerified) {
-    throw new AppError("EMAIL_NOT_VERIFIED", 400);
+  // Silently return success even if user not found — prevents email enumeration
+  if (!user || !user.isVerified) {
+    return { message: "RESET_OTP_SENT_SUCCESSFULLY" };
   }
 
   const otp = generateOTP();
@@ -265,4 +261,40 @@ export const googleLoginService = async (user) => {
   await user.save();
 
   return { user, accessToken, refreshToken };
+};
+
+export const updateProfileService = async (userId, { username, email }) => {
+  const user = await User.findById(userId);
+  if (!user) throw new AppError("USER_NOT_FOUND", 404);
+
+  if (username) {
+    const existing = await User.findOne({ username, _id: { $ne: userId } });
+    if (existing) throw new AppError("USERNAME_ALREADY_TAKEN", 409);
+    user.username = username;
+  }
+
+  if (email) {
+    const existing = await User.findOne({ email, _id: { $ne: userId } });
+    if (existing) throw new AppError("EMAIL_ALREADY_IN_USE", 409);
+    user.email = email;
+  }
+
+  await user.save();
+  return { user };
+};
+
+export const changePasswordService = async (userId, { currentPassword, newPassword }) => {
+  const user = await User.findById(userId).select("+password");
+  if (!user) throw new AppError("USER_NOT_FOUND", 404);
+
+  if (!user.password) throw new AppError("USE_GOOGLE_LOGIN_FOR_THIS_ACCOUNT", 400);
+
+  const isMatched = await comparePassword(currentPassword, user.password);
+  if (!isMatched) throw new AppError("INVALID_CURRENT_PASSWORD", 401);
+
+  user.password = await hashPassword(newPassword);
+  user.tokenVersion += 1; // Invalidate old sessions
+  await user.save();
+
+  return { message: "PASSWORD_CHANGED_SUCCESSFULLY" };
 };

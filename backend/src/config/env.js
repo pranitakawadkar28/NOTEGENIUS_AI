@@ -20,6 +20,11 @@ const requiredEnvVars = [
   "GEMINI_API_KEY",
   "RAZORPAY_API_KEY",
   "RAZORPAY_API_SECRET",
+  "AWS_ACCESS_KEY_ID",
+  "AWS_SECRET_ACCESS_KEY",
+  "AWS_REGION",
+  "AWS_S3_BUCKET_NAME",
+  "AWS_SES_SENDER_EMAIL",
 ];
 
 const missing = requiredEnvVars.filter((key) => !process.env[key]);
@@ -55,3 +60,9 @@ export const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
 export const RAZORPAY_API_KEY = process.env.RAZORPAY_API_KEY;
 export const RAZORPAY_API_SECRET = process.env.RAZORPAY_API_SECRET;
+
+export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+export const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+export const AWS_REGION = process.env.AWS_REGION;
+export const AWS_S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME;
+export const AWS_SES_SENDER_EMAIL = process.env.AWS_SES_SENDER_EMAIL;

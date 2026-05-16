@@ -1,11 +1,11 @@
-import { GEMINI_API_KEY } from "./env.js";
+import { GEMINI_API_KEY } from "../config/env.js";
 
-import { AppError } from "../utils/AppError.js";
+import { AppError } from "./AppError.js";
 
 const GEMINI_URL =
-  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+  "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
-export const generateGeminiResponse = async (prompt) => {
+export const generateGeminiResponse = async (prompt, retryCount = 0) => {
   try {
     const response = await fetch(`${GEMINI_URL}?key=${GEMINI_API_KEY}`, {
       method: "POST",
@@ -26,17 +26,23 @@ export const generateGeminiResponse = async (prompt) => {
 
         generationConfig: {
           temperature: 0.4,
-          responseMimeType: "application/json",
         },
       }),
     });
 
     if (!response.ok) {
       const errText = await response.text();
+      const errData = JSON.parse(errText);
+
+      // Retry logic for 503 Service Unavailable (high demand)
+      if (response.status === 503 && retryCount < 3) {
+        console.log(`GEMINI BUSY (503). Retrying in 2s... (Attempt ${retryCount + 1})`);
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        return generateGeminiResponse(prompt, retryCount + 1);
+      }
 
       console.error("GEMINI API ERROR:", errText);
-
-      throw new AppError("GEMINI_API_REQUEST_FAILED", 500);
+      throw new AppError(errData.error?.message || "GEMINI_API_REQUEST_FAILED", 500);
     }
 
     const data = await response.json();
@@ -52,10 +58,13 @@ export const generateGeminiResponse = async (prompt) => {
       .replace(/```/g, "")
       .trim();
 
+    console.log("CLEANED AI RESPONSE:", cleanText);
+
     return JSON.parse(cleanText);
   } catch (error) {
-    console.error("GEMINI FETCH ERROR:", error);
+    if (error instanceof AppError) throw error;
 
+    console.error("GEMINI FETCH ERROR:", error);
     throw new AppError(error.message || "GEMINI_API_FETCH_FAILED", 500);
   }
 };
