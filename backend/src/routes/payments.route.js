@@ -6,7 +6,7 @@ import {
   createOrder,
   verifyPayment,
   getPaymentHistory,
-} from "../controllers/payment/payment.controller.js";
+} from "../controllers/payments/payments.controller.js";
 
 const paymentRouter = express.Router();
 

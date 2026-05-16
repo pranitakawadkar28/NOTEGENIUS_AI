@@ -1,6 +1,6 @@
 import crypto from "crypto";
 
-import Payment from "../../models/payment.model.js";
+import Payment from "../../models/payments.model.js";
 import { User } from "../../models/user.model.js";
 
 import razorpay from "../../config/razorpay.js";

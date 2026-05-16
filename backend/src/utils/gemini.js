@@ -58,8 +58,6 @@ export const generateGeminiResponse = async (prompt, retryCount = 0) => {
       .replace(/```/g, "")
       .trim();
 
-    console.log("CLEANED AI RESPONSE:", cleanText);
-
     return JSON.parse(cleanText);
   } catch (error) {
     if (error instanceof AppError) throw error;

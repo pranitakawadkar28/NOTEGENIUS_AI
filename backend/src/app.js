@@ -9,9 +9,9 @@ import { FRONTEND_URL } from "./config/env.js";
 import passport from "./config/passport.js";
 
 import authRouter from "./routes/auth.route.js";
-import noteRouter from "./routes/note.route.js";
+import noteRouter from "./routes/notes.route.js";
 import pdfRouter from "./routes/pdf.route.js";
-import paymentRouter from "./routes/payment.route.js";
+import paymentRouter from "./routes/payments.route.js";
 
 const app = express();
 

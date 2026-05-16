@@ -1,7 +1,6 @@
-import {
   createRazorpayOrder,
   verifyRazorpayPayment,
-} from "../../services/payment/payment.service.js";
+} from "../../services/payments/payments.service.js";
 
 import { PLANS } from "../../config/plans.js";
 import { AppError } from "../../utils/AppError.js";
