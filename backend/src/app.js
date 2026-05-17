@@ -44,6 +44,11 @@ app.use(passport.initialize());
 // Handle favicon.ico requests to avoid 404 errors in browser logs
 app.get("/favicon.ico", (req, res) => res.status(204).end());
 
+// Health Check
+app.get("/", (req, res) => {
+  res.json({ message: "NoteGenius AI Backend is running!", status: "OK" });
+});
+
 app.use("/api/auth", authRouter);
 app.use("/api/notes", noteRouter);
 app.use("/api/pdf", pdfRouter);
